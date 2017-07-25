@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="72d719c7-178f-43bd-a310-37df9ba1c057" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/VNAP.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/artifacts/VNAP.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Rainbow.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/json_simple.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/mariadb_java_client_2_0_3.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/VNAP/Connect.java" afterPath="$PROJECT_DIR$/src/VNAP/Connect.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/VNAP/Hash.java" afterPath="$PROJECT_DIR$/src/VNAP/Hash.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/VNAP/Login.java" afterPath="$PROJECT_DIR$/src/VNAP/Login.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/VNAP/MyPlugin.java" afterPath="$PROJECT_DIR$/src/VNAP/MyPlugin.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/VNAP/Register.java" afterPath="$PROJECT_DIR$/src/VNAP/Register.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -247,7 +235,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />

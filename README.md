@@ -23,6 +23,7 @@ Doing these plugins is awesome and funny... But I've to pay my studies (I'm at u
 
 * **BitCoin:** 16N42QASCJuy4gtPbYRAwS3T3UGJJ2n1uh
 * **PayPal:** alvarostagg@openmailbox.org
+* **Patreon:** https://www.patreon.com/algoru
 
 
 
