@@ -1,7 +1,9 @@
 <component name="libraryTable">
-  <library name="Rainbow">
+  <library name="libs">
     <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/mariadb-java-client-2.0.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/Rainbow.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/json-simple.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

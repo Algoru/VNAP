@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Auth.iml" filepath="$PROJECT_DIR$/Auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VNAP.iml" filepath="$PROJECT_DIR$/VNAP.iml" />
     </modules>
   </component>
 </project>

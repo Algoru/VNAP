@@ -34,14 +34,12 @@ public class Connect {
             Class.forName("org.mariadb.jdbc.Driver");
             conn = DriverManager.getConnection(this.url, this.dbUsrName, this.dbPassword);
             stmt = conn.createStatement();
-        } catch (SQLException se) {
-            se.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public int CheckIfExists(String username) {
+    public int checkIfExists(String username) {
         int count = 0;
         sql = "SELECT COUNT(*) FROM " + tableName + " WHERE username = ?";
         try {
@@ -58,7 +56,7 @@ public class Connect {
         return count;
     }
 
-    public void RegisterUser(String username, String password) {
+    public void registerUser(String username, String password) {
         sql = "INSERT INTO " + tableName + " (username, password) VALUES ('" + username + "','" + password + "')";
         try {
             rs = stmt.executeQuery(sql);
@@ -67,7 +65,7 @@ public class Connect {
         }
     }
 
-    public boolean AuthUser(String username, String password) {
+    public boolean authUser(String username, String password) {
         sql = "SELECT COUNT(*) FROM " + tableName + " WHERE username='" + username + "' AND password='" + password + "'";
         boolean ok = false;
 
@@ -83,7 +81,7 @@ public class Connect {
         return false;
     }
 
-    public void Close() {
+    public void close() {
         try {
             if (conn != null)
                 conn.close();

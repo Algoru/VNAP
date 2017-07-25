@@ -54,7 +54,7 @@ public class Login implements MC_Command {
             }
 
             Connect conn = new Connect();
-            boolean authed = conn.AuthUser(mc_player.getName(), password);
+            boolean authed = conn.authUser(mc_player.getName(), password);
 
             if (authed) {
                 MyPlugin.inPlayers.add(mc_player.getName());
@@ -64,7 +64,7 @@ public class Login implements MC_Command {
             } else
                 mc_player.sendMessage(ChatColor.RED + "Incorrect user or password. " + ChatColor.RED + "Please, try again");
 
-            conn.Close();
+            conn.close();
         }
     }
 

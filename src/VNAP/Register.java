@@ -55,12 +55,12 @@ public class Register implements MC_Command {
             }
 
             Connect conn = new Connect();
-            if (conn.CheckIfExists(playerName) > 0) {
+            if (conn.checkIfExists(playerName) > 0) {
                 mc_player.sendMessage(ChatColor.RED + "Already registered");
                 mc_player.sendMessage(ChatColor.RED + "Login with /login <Pass>");
             } else {
                 if (!MyPlugin.inPlayers.contains(mc_player.getName())) {
-                    conn.RegisterUser(playerName, firstPassword);
+                    conn.registerUser(playerName, firstPassword);
                     MyPlugin.inPlayers.add(mc_player.getName());
                     mc_player.sendMessage(ChatColor.GREEN + "Welcome to " + MyPlugin.serverName + " !");
                 } else
@@ -69,7 +69,7 @@ public class Register implements MC_Command {
                 mc_player.setInvulnerable(false);
             }
 
-            conn.Close();
+            conn.close();
         }
     }
 

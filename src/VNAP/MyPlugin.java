@@ -35,6 +35,7 @@ public class MyPlugin extends PluginBase {
     public static String dbUsrName = "";
     public static String dbPassword = "";
     public static String dbTable = "";
+    public static String hashAlgo = "";
 
     public static ArrayList<String> inPlayers = new ArrayList<String>();
 
@@ -46,7 +47,8 @@ public class MyPlugin extends PluginBase {
             + "    \"db\": \"db_name_here\",\n"
             + "    \"user\": \"db_user_here\",\n"
             + "    \"password\": \"db_password_here\",\n"
-            + "    \"table\": \"db_table_here\"\n"
+            + "    \"table\": \"db_table_here\",\n"
+            + "    \"hash\": \"MD5\"\n"
             + "}\n";
     private File jsonFile;
     private File confDir;
@@ -98,6 +100,7 @@ public class MyPlugin extends PluginBase {
             dbUsrName = (String)jsonObj.get("user");
             dbPassword = (String)jsonObj.get("password");
             dbTable = (String)jsonObj.get("table");
+            hashAlgo = (String)jsonObj.get("hash");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,7 +130,7 @@ public class MyPlugin extends PluginBase {
         playerLocation = player.getLocation();
 
         Connect conn = new Connect();
-        if (conn.CheckIfExists(player.getName()) < 1) {
+        if (conn.checkIfExists(player.getName()) < 1) {
             player.sendMessage(ChatColor.RED + "Welcome " +
                     ChatColor.BOLD + ChatColor.UNDERLINE + ChatColor.AQUA + player.getName() +
                     ChatColor.RESET + " to " + serverName + " !");
@@ -210,7 +213,7 @@ public class MyPlugin extends PluginBase {
         PluginInfo info = new PluginInfo();
         info.description = "Register and login players to your server";
         info.name = "VNAP";
-        info.version = "1.0";
+        info.version = "1.1";
         return info;
     }
 }

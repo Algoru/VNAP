@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="json-simple">
+  <library name="Essentials">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/json-simple.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/VNAP/Essentials.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
