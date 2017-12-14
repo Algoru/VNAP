@@ -18,46 +18,40 @@ package VNAP;
 
 import java.sql.*;
 
-public class Connect {
-    private final String url = "jdbc:mariadb://localhost/" + MyPlugin.dbUrl;
-    private final String dbUsrName = MyPlugin.dbUsrName;
-    private final String dbPassword = MyPlugin.dbPassword;
-    private final String tableName = MyPlugin.dbTable;
-    private String sql = "";
+public class Connection {
+    private String dbURL;
+    private String dbUserName;
+    private String dbPassword;
+    private String dbTable;
+    private String sql;
 
-    private Connection conn = null;
-    private Statement stmt = null;
-    private ResultSet rs = null;
+    private java.sql.Connection conn;
+    private Statement stmt;
+    private ResultSet rs;
 
-    public Connect() {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-            conn = DriverManager.getConnection(this.url, this.dbUsrName, this.dbPassword);
-            stmt = conn.createStatement();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Connection(Configuration cfg) throws Exception {
+        dbURL = "jdbc:mariadb://" + cfg.getDbURL();
+        dbUserName = cfg.getDbUser();
+        dbPassword = cfg.getDbPassword();
+        dbTable = cfg.getDbTable();
+
+        Class.forName("org.mariadb.jdbc.Driver");
+        conn = DriverManager.getConnection(dbURL, dbUserName, dbPassword);
+        stmt = conn.createStatement();
     }
 
-    public int checkIfExists(String username) {
-        int count = 0;
-        sql = "SELECT COUNT(*) FROM " + tableName + " WHERE username = ?";
-        try {
-            final PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, username);
-            rs = ps.executeQuery();
+    public boolean playerExists(String username) throws Exception {
+        sql = "SELECT EXISTS(SELECT * FROM " + dbTable + " WHERE username=?";
 
-            if (rs.next())
-                count = rs.getInt(1);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setString(1, username);
+        rs = preparedStatement.executeQuery();
 
-        return count;
+        return rs.first();
     }
 
     public void registerUser(String username, String password) {
-        sql = "INSERT INTO " + tableName + " (username, password) VALUES ('" + username + "','" + password + "')";
+        sql = "INSERT INTO " + dbTable + " (username, password) VALUES ('" + username + "','" + password + "')";
         try {
             rs = stmt.executeQuery(sql);
         } catch (SQLException se) {
@@ -66,7 +60,7 @@ public class Connect {
     }
 
     public boolean authUser(String username, String password) {
-        sql = "SELECT COUNT(*) FROM " + tableName + " WHERE username='" + username + "' AND password='" + password + "'";
+        sql = "SELECT COUNT(*) FROM " + dbTable  + " WHERE username='" + username + "' AND password='" + password + "'";
         boolean ok = false;
 
         try {

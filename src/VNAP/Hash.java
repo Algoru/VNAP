@@ -20,13 +20,13 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 
 public class Hash {
-    private String hashAlgo = MyPlugin.hashAlgo;
-    private String hashedPassword = new String();
     private MessageDigest md;
+    private String hashedPassword;
 
     public Hash(String password) {
+        hashedPassword = null;
         try {
-            md = MessageDigest.getInstance(hashAlgo);
+            md = MessageDigest.getInstance("MD5");
             md.update(password.getBytes(), 0, password.length());
             hashedPassword = new BigInteger(1, md.digest()).toString(16);
         } catch (Exception e) {

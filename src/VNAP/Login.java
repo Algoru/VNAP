@@ -20,7 +20,6 @@ import PluginReference.ChatColor;
 import PluginReference.MC_Command;
 import PluginReference.MC_Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Login implements MC_Command {
@@ -31,40 +30,20 @@ public class Login implements MC_Command {
 
     @Override
     public List<String> getAliases() {
-        return Arrays.asList("entrar");
+        return null;
     }
 
     @Override
     public String getHelpLine(MC_Player mc_player) {
-        return ChatColor.GOLD + "/login <Pass>" + ChatColor.WHITE + " -- Login into the server";
+        return ChatColor.GOLD + "/login <password>" + ChatColor.WHITE + " -- Login into the server";
     }
 
     @Override
     public void handleCommand(MC_Player mc_player, String[] args) {
-        if (args.length > 1)
+        if (args.length != 1)
             mc_player.sendMessage(this.getHelpLine(mc_player));
         else {
-            String password = new Hash(args[0]).getHashedPassword();
-            final String playerName = mc_player.getName();
 
-            if (MyPlugin.inPlayers.contains(playerName)) {
-                mc_player.sendMessage(ChatColor.RED + "You'r already login!");
-                mc_player.setInvulnerable(false);
-                return;
-            }
-
-            Connect conn = new Connect();
-            boolean authed = conn.authUser(mc_player.getName(), password);
-
-            if (authed) {
-                MyPlugin.inPlayers.add(mc_player.getName());
-                mc_player.sendMessage(ChatColor.GREEN + "Welcome back, " + ChatColor.BOLD + playerName
-                        + ChatColor.RESET + ChatColor.GREEN + "!");
-                mc_player.setInvulnerable(false);
-            } else
-                mc_player.sendMessage(ChatColor.RED + "Incorrect user or password. " + ChatColor.RED + "Please, try again");
-
-            conn.close();
         }
     }
 

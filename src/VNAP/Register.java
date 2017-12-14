@@ -20,10 +20,15 @@ import PluginReference.ChatColor;
 import PluginReference.MC_Command;
 import PluginReference.MC_Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Register implements MC_Command {
+    private Connection conn;
+
+    public Register(Connection conn) {
+        this.conn = conn;
+    }
+
     @Override
     public String getCommandName() {
         return "register";
@@ -31,12 +36,12 @@ public class Register implements MC_Command {
 
     @Override
     public List<String> getAliases() {
-        return Arrays.asList("registrar");
+        return null;
     }
 
     @Override
     public String getHelpLine(MC_Player mc_player) {
-        return ChatColor.GOLD + "/register <Pass> <Pass>" + ChatColor.WHITE + " -- Register into the server";
+        return ChatColor.GOLD + "/register <password> <password>" + ChatColor.WHITE + " -- Register into the server";
     }
 
     @Override
@@ -44,32 +49,17 @@ public class Register implements MC_Command {
         if (args.length != 2)
             mc_player.sendMessage(this.getHelpLine(mc_player));
         else {
-            String firstPassword = new Hash(args[0]).getHashedPassword(),
-                   confirmedPassword = new Hash(args[1]).getHashedPassword();
-
-            String playerName = mc_player.getName();
-
-            if (!firstPassword.equals(confirmedPassword)) {
-                mc_player.sendMessage(ChatColor.RED + "Passwords do not match. Try again");
-                return;
+            try {
+                if (conn.playerExists(mc_player.getName())) {
+                    mc_player.sendMessage(ChatColor.RED + "You're already registred.");
+                    mc_player.sendMessage(ChatColor.RED + "Log Ing using /login <password>.");
+                } else {
+                    mc_player.sendMessage(ChatColor.GREEN + "Welcome!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                mc_player.sendMessage(ChatColor.GRAY + "There was a problem while register. Contact an OP !");
             }
-
-            Connect conn = new Connect();
-            if (conn.checkIfExists(playerName) > 0) {
-                mc_player.sendMessage(ChatColor.RED + "Already registered");
-                mc_player.sendMessage(ChatColor.RED + "Login with /login <Pass>");
-            } else {
-                if (!MyPlugin.inPlayers.contains(mc_player.getName())) {
-                    conn.registerUser(playerName, firstPassword);
-                    MyPlugin.inPlayers.add(mc_player.getName());
-                    mc_player.sendMessage(ChatColor.GREEN + "Welcome to " + MyPlugin.serverName + " !");
-                } else
-                    mc_player.sendMessage(ChatColor.RED + "Already login");
-
-                mc_player.setInvulnerable(false);
-            }
-
-            conn.close();
         }
     }
 

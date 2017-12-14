@@ -17,96 +17,62 @@
 package VNAP;
 
 import PluginReference.*;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class MyPlugin extends PluginBase {
-    public static MC_Server server = null;
+    public static MC_Server server;
+    public static ArrayList<String> inPlayers;
 
-    public static String serverName = "";
-    public static String dbUrl = "";
-    public static String dbUsrName = "";
-    public static String dbPassword = "";
-    public static String dbTable = "";
-    public static String hashAlgo = "";
-
-    public static ArrayList<String> inPlayers = new ArrayList<String>();
-
+    private Configuration cfg;
+    private Connection conn;
     private MC_Location playerLocation;
-    private final String fileName = "VNAP/db.json";
-    private final String dbModel =
-              "{\n"
-            + "    \"server_name\": \"your server name\",\n"
-            + "    \"db\": \"db_name_here\",\n"
-            + "    \"user\": \"db_user_here\",\n"
-            + "    \"password\": \"db_password_here\",\n"
-            + "    \"table\": \"db_table_here\",\n"
-            + "    \"hash\": \"MD5\"\n"
-            + "}\n";
-    private File jsonFile;
-    private File confDir;
+
+    private final String CONFIGURATION_FILE = "./plugins_mod/VNAP/db.json";
 
     @Override
     public void onStartup(MC_Server server) {
         this.server = server;
+        inPlayers = new ArrayList<String>();
 
-        JSONParser parser = new JSONParser();
-        jsonFile = new File(fileName);
-        confDir = new File("VNAP");
+        boolean firstUse = false;
 
-        if (!confDir.exists()) {
-            System.out.println(" [*] VNAP config dir was not found... Creating.");
-            try {
-                confDir.mkdir();
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(" [*] Unable to create VNAP config dir.");
-            } finally {
-                System.out.println(" [*] VNAP config dir created successfully");
-            }
+        File configDir = new File("./plugins_mod/VNAP");
+        if (!configDir.exists()) {
+            firstUse = true;
+            System.out.println(" [*] VNAP configuration dir not found. Creating...");
+            if (configDir.mkdir())
+                System.out.println(" [+] VNAP configuration dir was created !");
+            else
+                System.out.println(" [-] Unable to create configuration dir !");
         } else
-            System.out.println(" [*] VNAP config dir found !");
-
-        if (!jsonFile.exists()) {
-            System.out.println(" [*] " + fileName + " was not found... Creating.");
-            PrintWriter pw = null;
-
-            try {
-                pw = new PrintWriter(jsonFile, "UTF-8");
-                pw.write(dbModel);
-                System.out.println(" [*] " + fileName + " created !");
-            } catch (Exception e) {
-                System.out.println(" [*] " + fileName + " could not be created !");
-            } finally {
-                if (pw != null)
-                    pw.close();
-            }
-        } else
-            System.out.println(" [*] " + fileName + " found !");
+            System.out.println(" [+] VNAP configuration dir found !");
 
         try {
-            Object obj = parser.parse(new FileReader(fileName));
-            JSONObject jsonObj = (JSONObject)obj;
-
-            serverName = (String)jsonObj.get("server_name");
-            dbUrl = (String)jsonObj.get("db");
-            dbUsrName = (String)jsonObj.get("user");
-            dbPassword = (String)jsonObj.get("password");
-            dbTable = (String)jsonObj.get("table");
-            hashAlgo = (String)jsonObj.get("hash");
+            cfg = new Configuration(CONFIGURATION_FILE);
+            cfg.readConfiguration();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(" [-] Unable to set configuration from configuration file: " + e.getMessage());
         }
 
-        server.registerCommand(new Register());
-        server.registerCommand(new Login());
+        if (firstUse) {
+            System.out.println(" [*] SEEMS LIKE THIS IS THE FIRST TIME YOU RUN THIS PLUGIN.");
+            System.out.println(" [*] PLEASE, EDIT \"VNAP/db.json\" FILE TO CONFIGURE YOUR");
+            System.out.println(" [*] DATABASE. OTHERWISE, THE PLUGIN WON'T WORK !");
+        } else {
+            System.out.println(" [+] Trying DB configuration...");
+            try {
+                conn = new Connection(cfg);
+                System.out.println(" [+] Connected to database !");
+
+                server.registerCommand(new Register(conn));
+                server.registerCommand(new Login());
+            } catch (Exception e) {
+                System.out.println(" [-] Unable to connect with database: " + e.getMessage());
+            }
+        }
 
         System.out.println("=== VNAP loaded ===");
     }
@@ -122,23 +88,31 @@ public class MyPlugin extends PluginBase {
     private void printRequestLoginMessage(MC_Player mc_player) {
         mc_player.sendMessage(ChatColor.RED + "Please use /login Pass to login");
         mc_player.sendMessage(ChatColor.RED + "¿Don't have an account? Create it with:");
-        mc_player.sendMessage(ChatColor.RED + "/register Pass Pass");
+        mc_player.sendMessage(ChatColor.RED + "/register <password> <password>");
     }
 
     @Override
     public void onPlayerJoin(MC_Player player) {
         playerLocation = player.getLocation();
 
-        Connect conn = new Connect();
-        if (conn.checkIfExists(player.getName()) < 1) {
+        String playerName = player.getName();
+        boolean playerExists = false;
+
+        try {
+            playerExists = conn.playerExists(playerName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (playerExists) {
             player.sendMessage(ChatColor.RED + "Welcome " +
-                    ChatColor.BOLD + ChatColor.UNDERLINE + ChatColor.AQUA + player.getName() +
-                    ChatColor.RESET + " to " + serverName + " !");
-            player.sendMessage(ChatColor.RED + "Please, use /register Pass Pass to create an account");
+                    ChatColor.BOLD + ChatColor.UNDERLINE + ChatColor.AQUA + playerName +
+                    ChatColor.RESET + " to " + cfg.getServerName() + " !");
+            player.sendMessage(ChatColor.RED + "Please, use /register <password> <password> to create an account");
         } else {
             player.sendMessage(ChatColor.RED + "Welcome back, " + ChatColor.AQUA + ChatColor.BOLD + ChatColor.UNDERLINE +
-                    player.getName() + ChatColor.RESET + " !");
-            player.sendMessage(ChatColor.RED + "Please use /login Pass to login");
+                    playerName + ChatColor.RESET + " !");
+            player.sendMessage(ChatColor.RED + "Please use /login <password> to login");
         }
 
         player.setInvulnerable(true);
@@ -147,7 +121,7 @@ public class MyPlugin extends PluginBase {
     @Override
     public void onPlayerInput(MC_Player mc_player, String msg, MC_EventInfo ei) {
         if (!inPlayers.contains(mc_player.getName())) {
-            if (!(msg.contains("/login") || msg.contains("/entrar") || msg.contains("/register") || msg.contains("/registrar"))) {
+            if (!(msg.contains("/login") || msg.contains("/register"))) {
                 ei.isCancelled = true;
                 printRequestLoginMessage(mc_player);
             }
@@ -211,9 +185,9 @@ public class MyPlugin extends PluginBase {
     @Override
     public PluginInfo getPluginInfo() {
         PluginInfo info = new PluginInfo();
-        info.description = "Register and login players to your server";
+        info.description = "Register and login players to your Rainbow server.";
         info.name = "VNAP";
-        info.version = "1.1";
+        info.version = "1.2";
         return info;
     }
 }
