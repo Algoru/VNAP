@@ -51,7 +51,7 @@ public class Register implements MC_Command {
         else {
             try {
                 if (conn.playerExists(mc_player.getName())) {
-                    mc_player.sendMessage(ChatColor.RED + "You're already registred.");
+                    mc_player.sendMessage(ChatColor.RED + "You're already registered.");
                     mc_player.sendMessage(ChatColor.RED + "Log Ing using /login <password>.");
                 } else {
                     mc_player.sendMessage(ChatColor.GREEN + "Welcome!");

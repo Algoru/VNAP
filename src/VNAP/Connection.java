@@ -16,6 +16,8 @@
 
 package VNAP;
 
+import PluginReference.MC_Player;
+
 import java.sql.*;
 
 public class Connection {
@@ -50,29 +52,36 @@ public class Connection {
         return rs.first();
     }
 
-    public void registerUser(String username, String password) {
-        sql = "INSERT INTO " + dbTable + " (username, password) VALUES ('" + username + "','" + password + "')";
-        try {
-            rs = stmt.executeQuery(sql);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
+    public String login(String username, String password) throws Exception {
+        String userName = "";
+
+        sql = "SELECT * FROM " + dbTable + " WHERE username=? AND password=?";
+
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+        rs = preparedStatement.executeQuery();
+
+        if (rs.next())
+            userName = rs.getString("username");
+
+        return userName;
     }
 
-    public boolean authUser(String username, String password) {
-        sql = "SELECT COUNT(*) FROM " + dbTable  + " WHERE username='" + username + "' AND password='" + password + "'";
-        boolean ok = false;
+    public String register(String username, String password) throws Exception {
+        String userName = "";
 
-        try {
-            rs = stmt.executeQuery(sql);
-            if (rs.next())
-                if (rs.getInt(1) > 0)
-                    return true;
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
+        sql = "INSERT INTO " + dbTable + " (username, password) VALUES (?,?)";
 
-        return false;
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+        rs = preparedStatement.executeQuery();
+
+        if (rs.next())
+            userName = username;
+
+        return userName;
     }
 
     public void close() {
