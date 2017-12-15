@@ -71,6 +71,9 @@ public class MyPlugin extends PluginBase {
                 server.registerCommand(new Login());
             } catch (Exception e) {
                 System.out.println(" [-] Unable to connect with database: " + e.getMessage());
+            } finally {
+                // Should leave the connection open ?
+                conn.close();
             }
         }
 
@@ -99,9 +102,12 @@ public class MyPlugin extends PluginBase {
         boolean playerExists = false;
 
         try {
+            conn = new Connection(cfg);
             playerExists = conn.playerExists(playerName);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            conn.close();
         }
 
         if (playerExists) {

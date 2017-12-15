@@ -43,7 +43,7 @@ public class Login implements MC_Command {
         if (args.length != 1)
             mc_player.sendMessage(this.getHelpLine(mc_player));
         else {
-
+    
         }
     }
 
