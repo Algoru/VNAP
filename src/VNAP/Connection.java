@@ -16,8 +16,6 @@
 
 package VNAP;
 
-import PluginReference.MC_Player;
-
 import java.sql.*;
 
 public class Connection {
