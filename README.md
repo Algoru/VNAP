@@ -14,8 +14,9 @@ VNAP applies a MD5 hash into users passwords. It's not the best, but it does the
 ----
 ## TO-DO
 
-* Add support for more HASH algorithms (like SHA)
-* Add other DB support (like MongoDB)
+* Add support for more HASH algorithms (like SHA).
+* Add other DB support (maybe MongoDB).
+* Add password recovery via email.
 
 ----
 ## Donations
@@ -29,5 +30,6 @@ Doing these plugins is awesome and funny... But I've to pay my studies (I'm at u
 
 ## Notes
 * Sorry for my english.
+* My website: http://astagg.me
 * **Rainbow Forum page:** [http://www.project-rainbow.org/site/index.php?topic=2281.0](http://www.project-rainbow.org/site/index.php?topic=2281.0)
 * **Download .jar file:** [http://www.project-rainbow.org/site/index.php?action=downloads;sa=view;down=363](http://www.project-rainbow.org/site/index.php?action=downloads;sa=view;down=363)
