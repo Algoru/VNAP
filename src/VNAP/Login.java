@@ -23,6 +23,11 @@ import PluginReference.MC_Player;
 import java.util.List;
 
 public class Login implements MC_Command {
+    private Connection conn;
+
+    public Login(Connection conn) {
+        this.conn = conn;
+    }
     @Override
     public String getCommandName() {
         return "login";
@@ -39,11 +44,27 @@ public class Login implements MC_Command {
     }
 
     @Override
-    public void handleCommand(MC_Player mc_player, String[] args) {
+    public void handleCommand(MC_Player player, String[] args) {
         if (args.length != 1)
-            mc_player.sendMessage(this.getHelpLine(mc_player));
+            player.sendMessage(this.getHelpLine(player));
         else {
+            try {
+                String playerName = player.getName();
+                boolean success = conn.login(playerName, args[0]);
+                if (success) {
+                    MyPlugin.logInPlayer(playerName);
 
+                    player.setInvulnerable(false);
+                    player.sendMessage(ChatColor.GREEN + "Successfully logged !");
+                } else {
+                    player.sendMessage(ChatColor.RED + "Wrong password !");
+                    player.sendMessage(ChatColor.RED + "Check your password and try again.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                player.sendMessage(ChatColor.GRAY + "Internal error while trying to login !");
+                player.sendMessage(ChatColor.GRAY + "Contact an OP !");
+            }
         }
     }
 

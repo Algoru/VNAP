@@ -68,12 +68,9 @@ public class MyPlugin extends PluginBase {
                 System.out.println(" [+] Connected to database !");
 
                 server.registerCommand(new Register(conn));
-                server.registerCommand(new Login());
+                server.registerCommand(new Login(conn));
             } catch (Exception e) {
                 System.out.println(" [-] Unable to connect with database: " + e.getMessage());
-            } finally {
-                // Should leave the connection open ?
-                conn.close();
             }
         }
 
@@ -82,10 +79,16 @@ public class MyPlugin extends PluginBase {
 
     @Override
     public void onShutdown() {
+        if (conn != null)
+            conn.close();
         if (!inPlayers.isEmpty())
             inPlayers.clear();
 
         System.out.println("=== VNAP disabled ===");
+    }
+
+    public static void logInPlayer(String playerName) {
+        inPlayers.add(playerName);
     }
 
     private void printRequestLoginMessage(MC_Player mc_player) {
@@ -102,23 +105,17 @@ public class MyPlugin extends PluginBase {
         boolean playerExists = false;
 
         try {
-            conn = new Connection(cfg);
             playerExists = conn.playerExists(playerName);
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            conn.close();
+            System.out.println(" [-] Unable to check if player \"" + playerName + "\" exists: " + e.getMessage());
         }
 
-        if (playerExists) {
-            player.sendMessage(ChatColor.RED + "Welcome " +
-                    ChatColor.BOLD + ChatColor.UNDERLINE + ChatColor.AQUA + playerName +
-                    ChatColor.RESET + " to " + cfg.getServerName() + " !");
-            player.sendMessage(ChatColor.RED + "Please, use /register <password> <password> to create an account");
+        if (!playerExists) {
+            player.sendMessage(ChatColor.GOLD + "Welcome " +  ChatColor.BOLD + ChatColor.UNDERLINE + ChatColor.AQUA + playerName + ChatColor.GOLD + " to " + cfg.getServerName() + " !");
+            player.sendMessage(ChatColor.RED + "Please, use /register <password> <password> to create an account.");
         } else {
-            player.sendMessage(ChatColor.RED + "Welcome back, " + ChatColor.AQUA + ChatColor.BOLD + ChatColor.UNDERLINE +
-                    playerName + ChatColor.RESET + " !");
-            player.sendMessage(ChatColor.RED + "Please use /login <password> to login");
+            player.sendMessage(ChatColor.GOLD + "Welcome back, " + ChatColor.AQUA + ChatColor.BOLD + ChatColor.UNDERLINE + playerName + ChatColor.GOLD + " !");
+            player.sendMessage(ChatColor.RED + "Please use /login <password> to login.");
         }
 
         player.setInvulnerable(true);

@@ -45,20 +45,30 @@ public class Register implements MC_Command {
     }
 
     @Override
-    public void handleCommand(MC_Player mc_player, String[] args) {
+    public void handleCommand(MC_Player player, String[] args) {
         if (args.length != 2)
-            mc_player.sendMessage(this.getHelpLine(mc_player));
+            player.sendMessage(this.getHelpLine(player));
         else {
             try {
-                if (conn.playerExists(mc_player.getName())) {
-                    mc_player.sendMessage(ChatColor.RED + "You're already registered.");
-                    mc_player.sendMessage(ChatColor.RED + "Log Ing using /login <password>.");
+                String playerName = player.getName();
+                if (conn.playerExists(playerName)) {
+                    player.sendMessage(ChatColor.RED + "You're already registered.");
+                    player.sendMessage(ChatColor.RED + "Log Ing using /login <password>.");
                 } else {
-                    mc_player.sendMessage(ChatColor.GREEN + "Welcome!");
+                    if (!args[0].equals(args[1])) {
+                        player.sendMessage(ChatColor.RED + "Passwords do not match !");
+                        player.sendMessage(ChatColor.RED + "Check your passwords and try again.");
+                    } else {
+                        conn.register(playerName, args[0]);
+                        MyPlugin.logInPlayer(playerName);
+
+                        player.setInvulnerable(false);
+                        player.sendMessage(ChatColor.GOLD + "Successfully registered !");
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                mc_player.sendMessage(ChatColor.GRAY + "There was a problem while register. Contact an OP !");
+                player.sendMessage(ChatColor.GRAY + "There was a problem while register. Contact an OP !");
             }
         }
     }

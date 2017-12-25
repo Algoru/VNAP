@@ -43,53 +43,50 @@ public class Connection {
     }
 
     public boolean playerExists(String username) throws Exception {
-        sql = "SELECT EXISTS(SELECT * FROM " + dbTable + " WHERE username=?";
+        sql = "SELECT userName FROM " + dbTable + " WHERE userName=?";
 
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, username);
         rs = preparedStatement.executeQuery();
 
-        return rs.first();
+        return rs.next();
     }
 
-    public String login(String username, String password) throws Exception {
-        String userName = "";
-
-        sql = "SELECT * FROM " + dbTable + " WHERE username=? AND password=?";
+    public boolean login(String username, String password) throws Exception {
+        sql = "SELECT 1 FROM " + dbTable + " WHERE username=? AND password=MD5(?)";
 
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         rs = preparedStatement.executeQuery();
 
-        if (rs.next())
-            userName = rs.getString("username");
+        boolean exists = false;
+        if (rs.next()) {
+            sql = "UPDATE " + dbTable + " SET lastLogin=NOW() WHERE userName=?";
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.executeUpdate();
+            exists = true;
+        }
 
-        return userName;
+        return exists;
     }
 
-    public String register(String username, String password) throws Exception {
-        String userName = "";
-
-        sql = "INSERT INTO " + dbTable + " (username, password) VALUES (?,?)";
+    public void register(String username, String password) throws Exception {
+        sql = "INSERT INTO " + dbTable + " (userName, password) VALUES (?, MD5(?))";
 
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         rs = preparedStatement.executeQuery();
-
-        if (rs.next())
-            userName = username;
-
-        return userName;
     }
 
     public void close() {
         try {
-            if (conn != null)
-                conn.close();
             if (stmt != null)
                 stmt.close();
+            if (conn != null)
+                conn.close();
         } catch (SQLException se) {
             se.printStackTrace();
         }
