@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Alvaro Stagg [alvarostagg@protonmail.com]
+ * Copyright 2018 Alvaro Stagg [alvarostagg@protonmail.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,10 @@ package VNAP;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.FileReader;
 
 public class Configuration {
     private String serverName;
@@ -27,6 +30,7 @@ public class Configuration {
     private String dbUser;
     private String dbPassword;
     private String dbTable;
+    private String hash;
 
     private File configFile;
 
@@ -36,7 +40,8 @@ public class Configuration {
             + "    \"db_url\"     : \"db_name(url)_here\",\n"
             + "    \"user\"       : \"db_user_here\",\n"
             + "    \"password\"   : \"db_password_here\",\n"
-            + "    \"table\"      : \"db_table_here\"\n"
+            + "    \"table\"      : \"db_table_here\",\n"
+            + "    \"hash\"       : \"MD5\""
             + "}";
 
     public Configuration(String filePath) throws Exception {
@@ -68,6 +73,7 @@ public class Configuration {
         dbUser = (String)jsonObject.get("user");
         dbPassword = (String)jsonObject.get("password");
         dbTable = (String)jsonObject.get("table");
+        hash = (String)jsonObject.get("hash");
 
         fileReader.close();
     }
@@ -91,4 +97,6 @@ public class Configuration {
     public String getDbTable() {
         return dbTable;
     }
+
+    public String getHash() { return hash; }
 }

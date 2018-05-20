@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Alvaro Stagg [alvarostagg@protonmail.com]
+ * Copyright 2018 Alvaro Stagg [alvarostagg@protonmail.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -190,7 +190,8 @@ public class MyPlugin extends PluginBase {
         PluginInfo info = new PluginInfo();
         info.description = "Register and login players to your Rainbow server.";
         info.name = "VNAP";
-        info.version = "1.2";
+        info.version = "1.3";
+
         return info;
     }
 }

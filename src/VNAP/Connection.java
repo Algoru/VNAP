@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Alvaro Stagg [alvarostagg@protonmail.com]
+ * Copyright 2018 Alvaro Stagg [alvarostagg@protonmail.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package VNAP;
 
-import java.sql.*;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class Connection {
     private String dbURL;
@@ -29,19 +33,45 @@ public class Connection {
     private Statement stmt;
     private ResultSet rs;
 
-    public Connection(Configuration cfg) throws Exception {
-        dbURL = "jdbc:mariadb://" + cfg.getDbURL();
-        dbUserName = cfg.getDbUser();
-        dbPassword = cfg.getDbPassword();
-        dbTable = cfg.getDbTable();
+    private Configuration configuration;
+
+    public Connection(Configuration configuration) throws Exception {
+        this.configuration = configuration;
+
+        dbURL = "jdbc:mariadb://" + configuration.getDbURL();
+        dbUserName = configuration.getDbUser();
+        dbPassword = configuration.getDbPassword();
+        dbTable = configuration.getDbTable();
 
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(dbURL, dbUserName, dbPassword);
         stmt = conn.createStatement();
     }
 
+    private String getHashFunction() {
+        String function = "MD5(?)";
+
+        switch (configuration.getHash().toUpperCase()) {
+            case "SHA2":
+            case "SHA256":
+                function = "SHA2(?, 256)";
+                break;
+            case "SHA":
+            case "SHA1":
+                function = "SHA1(?)";
+                break;
+            case "MD5":
+                break;
+            default:
+                System.out.println(String.format("[-] '%s' is not supported. Using MD5 Hash...", configuration.getHash()));
+                break;
+        }
+
+        return function;
+    }
+
     public boolean playerExists(String username) throws Exception {
-        sql = "SELECT userName FROM " + dbTable + " WHERE userName=?";
+        sql = "SELECT user_name FROM " + dbTable + " WHERE user_name=?";
 
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, username);
@@ -51,7 +81,7 @@ public class Connection {
     }
 
     public boolean login(String username, String password) throws Exception {
-        sql = "SELECT 1 FROM " + dbTable + " WHERE username=? AND password=MD5(?)";
+        sql = "SELECT 1 FROM " + dbTable + " WHERE user_name=? AND password=" + getHashFunction();
 
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, username);
@@ -60,7 +90,7 @@ public class Connection {
 
         boolean exists = false;
         if (rs.next()) {
-            sql = "UPDATE " + dbTable + " SET lastLogin=NOW() WHERE userName=?";
+            sql = "UPDATE " + dbTable + " SET last_login=NOW() WHERE user_name=?";
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, username);
             preparedStatement.executeUpdate();
@@ -71,7 +101,7 @@ public class Connection {
     }
 
     public void register(String username, String password) throws Exception {
-        sql = "INSERT INTO " + dbTable + " (userName, password) VALUES (?, MD5(?))";
+        sql = "INSERT INTO " + dbTable + " (user_name, password) VALUES (?, " + getHashFunction() + ")";
 
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, username);
